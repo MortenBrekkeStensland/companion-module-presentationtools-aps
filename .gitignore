@@ -4,5 +4,3 @@ node_modules/
 *.log
 .DS_Store
 .yarn/
-build-local.command
-.local-build/
