@@ -74,6 +74,7 @@ Mac only:
 - Presentation_current: Currently opened presentation
 - Presentation_previous: Prevously opened presentation
 - Presentation_next: Next presentation to be opened
+- Presentation_notes: Presenter notes for the current slide
 - slide_number: Slide Number
 - slides_count: Slides Count
 - Slides_builds_count: Builds Count
