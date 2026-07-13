@@ -96,3 +96,5 @@ Mac only:
 - captured: is enabled when screen is captured for saving as a still image.
 - slot_displayed: is enabled when the presentation in slot-bank is opened
 - slot_exist: is enabled when a presentation exists for a slot.
+- PowerPoint_section_exists: is enabled when the active PowerPoint presentation contains the selected section number.
+- PowerPoint section is displayed: is enabled when the current slide is within the selected PowerPoint section.

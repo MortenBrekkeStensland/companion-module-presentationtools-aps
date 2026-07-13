@@ -7,6 +7,7 @@ const {
 	numberOfMediaFolders, 
 	minNumberOfMediaFolderFiles,
 	minNumberOfTabs,
+	numberOfPowerPointSectionDropdownChoices,
 } = require('./constants')
 var utils = require('./utils')
 
@@ -148,6 +149,14 @@ exports.getChoicesForTabs = function (tabsList) {
 		}
 
 		choicesList.push({ id: `Tab${i}`, label: text})
+	}
+	return choicesList
+}
+
+exports.getChoicesForPowerPointSections = function () {
+	const choicesList = []
+	for (let i = 1; i <= numberOfPowerPointSectionDropdownChoices; i++) {
+		choicesList.push({ id: String(i), label: String(i) })
 	}
 	return choicesList
 }

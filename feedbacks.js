@@ -633,6 +633,66 @@ exports.getFeedbacks = function (instance) {
 			},
 		},
 
+		PowerPoint_section_exists: {
+			type: 'boolean',
+			name: 'PowerPoint section exists',
+			description: 'If the active PowerPoint presentation has the selected section number, change the style',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Section',
+					id: 'Section',
+					default: '1',
+					choices: choices.getChoicesForPowerPointSections(),
+					allowCustom: true,
+					regex: '^[1-9]\\d*$',
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(204, 204, 0),
+			},
+			callback: function (feedback) {
+				const sectionNumber = Number(feedback.options.Section)
+				return (
+					self.powerPointSectionsState.available === true &&
+					Number.isInteger(sectionNumber) &&
+					sectionNumber > 0 &&
+					self.powerPointSectionsState.sections.length >= sectionNumber
+				)
+			},
+		},
+
+		PowerPoint_section_is_current: {
+			type: 'boolean',
+			name: 'PowerPoint section is displayed',
+			description: 'If the current slide is within the selected PowerPoint section, change the style',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Section',
+					id: 'Section',
+					default: '1',
+					choices: choices.getChoicesForPowerPointSections(),
+					allowCustom: true,
+					regex: '^[1-9]\\d*$',
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(255, 0, 0),
+			},
+			callback: function (feedback) {
+				const sectionNumber = Number(feedback.options.Section)
+				return (
+					self.powerPointSectionsState.available === true &&
+					Number.isInteger(sectionNumber) &&
+					sectionNumber > 0 &&
+					self.powerPointSectionsState.currentSectionIndex === sectionNumber
+				)
+			},
+		},
+
 		PowerPoint_media_state: {
 			type: 'boolean',
 			name: 'PowerPoint media state',
