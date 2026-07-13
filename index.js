@@ -203,6 +203,7 @@ class APSInstance extends InstanceBase {
 								Presentation_previous: jsonData.data.prev,
 								Presentation_current: jsonData.data.curr,
 								Presentation_next: jsonData.data.next,
+								Presentation_notes: jsonData.data.presenter_notes ?? '',
 							}
 							// For not raising exception while using old verions of APS
 							update_obj['slide_number'] = jsonData.data.slide_number
@@ -399,6 +400,7 @@ class APSInstance extends InstanceBase {
 			{ name: 'Presentation: Previous in folder', variableId: 'Presentation_previous' },
 			{ name: 'Presentation: Current', variableId: 'Presentation_current' },
 			{ name: 'Presentation: Next in folder', variableId: 'Presentation_next' },
+			{ name: 'Presentation: Notes', variableId: 'Presentation_notes' },
 			{ name: 'Presentation: Selected in watched presentation folder (Name)', variableId: 'watched_presentation_folder_selected_presentation_name' },
 			{ name: 'Presentation: Selected in watched presentation folder (Path)', variableId: 'watched_presentation_folder_selected_presentation_path' },
 			{ name: 'Presentation: Selected in watched presentation folder (Number)', variableId: 'watched_presentation_folder_selected_presentation_number' },
@@ -533,6 +535,7 @@ class APSInstance extends InstanceBase {
 			Presentation_previous: '',
 			Presentation_current: '',
 			Presentation_next: '',
+			Presentation_notes: '',
 			slide_number: '',
 			slides_count: '',
 			Slides_current_build: '',
