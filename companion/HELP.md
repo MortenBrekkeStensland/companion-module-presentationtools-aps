@@ -44,6 +44,7 @@ Controls APS by [PresentationTools](https://presentationtools.com/).
 #### Generic - Go to slide:
 
 - Go to the slide specified in the command
+- Go to the first slide of a selected, previous, or next PowerPoint section.
 
 #### Commands to control specific presentation software:
 
