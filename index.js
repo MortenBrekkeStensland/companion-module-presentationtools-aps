@@ -71,6 +71,16 @@ class APSInstance extends InstanceBase {
 			seamlessFullScreenInProgress: false,
 		}
 
+		this.powerPointSectionsState = {
+			available: false,
+			currentSectionIndex: -1,
+			currentSectionId: '-',
+			currentSectionName: '-',
+			currentSlideInSection: -1,
+			sectionsCount: 0,
+			sections: [],
+		}
+
 		this.captureTimeoutObj = null
 		this.slotCaptureTimeoutObj = null
 		this.folderCaptureTimeoutObj = null
@@ -231,6 +241,8 @@ class APSInstance extends InstanceBase {
 							}
 							
 							self.setVariableValues(update_obj)
+						} else if (jsonData.action === 'powerpoint_sections') {
+							self.setPowerPointSectionsVariables(jsonData.data)
 						} else if (jsonData.action === 'slots') {
 							self.setSlotVariables(jsonData.data)
 							states.updateSlotStates(self.slotStates, jsonData.data)
@@ -432,6 +444,12 @@ class APSInstance extends InstanceBase {
 			{ name: 'Slide: Total number (Powerpoint)', variableId: 'Powerpoint_slides_count' },
 			{ name: 'Slide: Current build (Powerpoint)', variableId: 'Powerpoint_Slides_current_build' },
 			{ name: 'Slide: Builds count (Powerpoint)', variableId: 'Powerpoint_Slides_builds_count' },
+			{ name: 'PowerPoint section: Available', variableId: 'Powerpoint_sections_available' },
+			{ name: 'PowerPoint section: Current section index', variableId: 'Powerpoint_sections_current_index' },
+			{ name: 'PowerPoint section: Current section ID', variableId: 'Powerpoint_sections_current_id' },
+			{ name: 'PowerPoint section: Current section name', variableId: 'Powerpoint_sections_current_name' },
+			{ name: 'PowerPoint section: Current slide in section', variableId: 'Powerpoint_sections_current_slide_in_section' },
+			{ name: 'PowerPoint section: Sections count', variableId: 'Powerpoint_sections_count' },
 			{ name: 'Media player: Playing media', variableId: 'Media_playing' },
 			{ name: 'Media player: Loaded media', variableId: 'Media_loaded' },
 			{ name: 'Media player: Playing media filename', variableId: 'Media_playing_filename' },
@@ -441,6 +459,14 @@ class APSInstance extends InstanceBase {
 			{ name: 'Media player: Time elapsed', variableId: 'Media_time_elapsed' },
 			{ name: 'Media player: Time duration', variableId: 'Media_time_duration' },
 		]
+		for (let i = 1; i <= self.powerPointSectionsState.sections.length; i++) {
+			variables.push(
+				{ name: `PowerPoint section ${i}: ID`, variableId: `Powerpoint_section${i}_id` },
+				{ name: `PowerPoint section ${i}: Name`, variableId: `Powerpoint_section${i}_name` },
+				{ name: `PowerPoint section ${i}: First slide index`, variableId: `Powerpoint_section${i}_first_slide_index` },
+				{ name: `PowerPoint section ${i}: Slides count`, variableId: `Powerpoint_section${i}_slides_count` },
+			)
+		}
 		for (let i = 1; i <= numberOfPresentationSlots; i++) {
 			variables.push({
 				name: `Presentation Slot ${i}`,
@@ -548,6 +574,12 @@ class APSInstance extends InstanceBase {
 			Powerpoint_slides_count: '',
 			Powerpoint_Slides_current_build: '',
 			Powerpoint_Slides_builds_count: '',
+			Powerpoint_sections_available: false,
+			Powerpoint_sections_current_index: -1,
+			Powerpoint_sections_current_id: '-',
+			Powerpoint_sections_current_name: '-',
+			Powerpoint_sections_current_slide_in_section: -1,
+			Powerpoint_sections_count: 0,
 			Media_playing: '',
 			Media_loaded: '',
 			Media_playing_filename: '',
@@ -599,6 +631,46 @@ class APSInstance extends InstanceBase {
 		values['presentation_slot_selected_number'] = 1
 		values['media_slot_selected_number'] = 1
 		values['image_slot_selected_number'] = 1
+
+		self.setVariableValues(values)
+	}
+
+	setPowerPointSectionsVariables(data) {
+		var self = this
+		const sections = Array.isArray(data?.sections) ? data.sections : []
+		const previousSectionsCount = self.powerPointSectionsState.sections.length
+
+		self.powerPointSectionsState = {
+			available: data?.available ?? false,
+			currentSectionIndex: data?.current_section_index ?? -1,
+			currentSectionId: data?.current_section_id ?? '-',
+			currentSectionName: data?.current_section_name ?? '-',
+			currentSlideInSection: data?.current_slide_in_section ?? -1,
+			sectionsCount: data?.sections_count ?? sections.length,
+			sections,
+		}
+
+		if (previousSectionsCount !== sections.length) {
+			self.variables(true)
+		}
+
+		const values = {
+			Powerpoint_sections_available: self.powerPointSectionsState.available,
+			Powerpoint_sections_current_index: self.powerPointSectionsState.currentSectionIndex,
+			Powerpoint_sections_current_id: self.powerPointSectionsState.currentSectionId,
+			Powerpoint_sections_current_name: self.powerPointSectionsState.currentSectionName,
+			Powerpoint_sections_current_slide_in_section: self.powerPointSectionsState.currentSlideInSection,
+			Powerpoint_sections_count: self.powerPointSectionsState.sectionsCount,
+		}
+
+		for (let i = 0; i < sections.length; i++) {
+			const sectionNumber = i + 1
+			const section = sections[i]
+			values[`Powerpoint_section${sectionNumber}_id`] = section.id ?? '-'
+			values[`Powerpoint_section${sectionNumber}_name`] = section.name ?? '-'
+			values[`Powerpoint_section${sectionNumber}_first_slide_index`] = section.first_slide_index ?? -1
+			values[`Powerpoint_section${sectionNumber}_slides_count`] = section.slides_count ?? 0
+		}
 
 		self.setVariableValues(values)
 	}

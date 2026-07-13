@@ -78,6 +78,16 @@ Mac only:
 - slide_number: Slide Number
 - slides_count: Slides Count
 - Slides_builds_count: Builds Count
+- Powerpoint_sections_available: Whether section information is available for the active PowerPoint slideshow
+- Powerpoint_sections_current_index: Current section number
+- Powerpoint_sections_current_id: Current section ID
+- Powerpoint_sections_current_name: Current section name
+- Powerpoint_sections_current_slide_in_section: Current slide number within the section
+- Powerpoint_sections_count: Total number of sections
+- Powerpoint_section&lt;n&gt;_id: Section ID for section &lt;n&gt;
+- Powerpoint_section&lt;n&gt;_name: Section name for section &lt;n&gt;
+- Powerpoint_section&lt;n&gt;_first_slide_index: First presentation slide number for section &lt;n&gt;
+- Powerpoint_section&lt;n&gt;_slides_count: Number of slides in section &lt;n&gt;
 
 #### Feedbacks
 
