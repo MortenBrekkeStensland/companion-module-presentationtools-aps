@@ -243,6 +243,7 @@ class APSInstance extends InstanceBase {
 							self.setVariableValues(update_obj)
 						} else if (jsonData.action === 'powerpoint_sections') {
 							self.setPowerPointSectionsVariables(jsonData.data)
+							self.checkFeedbacks('PowerPoint_section_exists', 'PowerPoint_section_is_current')
 						} else if (jsonData.action === 'slots') {
 							self.setSlotVariables(jsonData.data)
 							states.updateSlotStates(self.slotStates, jsonData.data)
