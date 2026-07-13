@@ -153,9 +153,10 @@ exports.getChoicesForTabs = function (tabsList) {
 	return choicesList
 }
 
-exports.getChoicesForPowerPointSections = function () {
+exports.getChoicesForPowerPointSections = function (numberOfSections = 0) {
 	const choicesList = []
-	for (let i = 1; i <= numberOfPowerPointSectionDropdownChoices; i++) {
+	const numberOfChoices = Math.max(numberOfPowerPointSectionDropdownChoices, numberOfSections)
+	for (let i = 1; i <= numberOfChoices; i++) {
 		choicesList.push({ id: String(i), label: String(i) })
 	}
 	return choicesList

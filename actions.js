@@ -358,6 +358,23 @@ exports.getActions = function (instance) {
 			callback: action_callback,
 		},
 
+		Powerpoint_Section_Go: {
+			name: 'Slide: Go to section (PowerPoint)',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Section',
+					id: 'Section',
+					default: '1',
+					choices: [
+						{ id: 'Previous', label: 'Previous' },
+						{ id: 'Next', label: 'Next' },
+					].concat(choices.getChoicesForPowerPointSections(instance.powerPointSectionsState.sections.length)),
+				},
+			],
+			callback: action_callback,
+		},
+
 		OpenStart_Presentation_Slot: {
 			name: 'Presentation: Open from slot',
 			options: [
@@ -925,6 +942,15 @@ exports.getCommandV2 = async function (action, instance) {
 			data.command = action.options.App,
 			data.parameters = {
 				slideNr: parseInt(await instance.parseVariablesInString(action.options.SlideNumber))
+			}
+			break
+		case 'Powerpoint_Section_Go':
+			if (action.options.Section === 'Previous' || action.options.Section === 'Next') {
+				data.command = `Powerpoint_Section_${action.options.Section}`
+			} else {
+				data.parameters = {
+					section: Number(action.options.Section),
+				}
 			}
 			break
 		case 'CapturePresentation':

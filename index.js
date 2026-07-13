@@ -653,6 +653,7 @@ class APSInstance extends InstanceBase {
 
 		if (previousSectionsCount !== sections.length) {
 			self.variables(true)
+			self.actions()
 		}
 
 		const values = {
