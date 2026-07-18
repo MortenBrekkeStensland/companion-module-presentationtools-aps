@@ -44,35 +44,33 @@ function getPresenterScreenChoices(instance) {
 	)
 }
 
-function sendMessage(socket, message){
+function sendMessage(socket, message) {
 	// Convert the message to a Buffer
-    const messageBuffer = Buffer.from(message, 'utf-8');
-    const messageLength = messageBuffer.length;
+	const messageBuffer = Buffer.from(message, 'utf-8')
+	const messageLength = messageBuffer.length
 
-    // Create a Buffer for the message length (4 bytes, big-endian)
-    const lengthBuffer = Buffer.alloc(4);
-    lengthBuffer.writeUInt32BE(messageLength);
+	// Create a Buffer for the message length (4 bytes, big-endian)
+	const lengthBuffer = Buffer.alloc(4)
+	lengthBuffer.writeUInt32BE(messageLength)
 
-    // Concatenate the buffers: prefix + length + message
-    const fullMessage = Buffer.concat([lengthBuffer, messageBuffer]);
+	// Concatenate the buffers: prefix + length + message
+	const fullMessage = Buffer.concat([lengthBuffer, messageBuffer])
 
-    // Send the full message to the server
-    socket.send(fullMessage);
+	// Send the full message to the server
+	socket.send(fullMessage)
 }
 
 exports.send = sendMessage
 
 exports.getActions = function (instance) {
 	async function action_callback(action) {
-		let cmd = ''		
-		const handler = instance.apiVersionMapping[instance.toBeUsedAPIversion].commandHandler;
-		data = await handler(action, instance);
-		
-		if (instance.socket == undefined || !instance.socket.isConnected)
-			return
+		let cmd = ''
+		const handler = instance.apiVersionMapping[instance.toBeUsedAPIversion].commandHandler
+		data = await handler(action, instance)
 
-		if(!data.command)
-			return
+		if (instance.socket == undefined || !instance.socket.isConnected) return
+
+		if (!data.command) return
 
 		cmd = JSON.stringify(data)
 		sendMessage(instance.socket, cmd)
@@ -140,15 +138,14 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Application',
 					id: 'Key',
-					default: "Key_Right",
+					default: 'Key_Right',
 					tooltip: 'Application',
-					choices: 
-						[
-							{id: "Key_Right", label: "All"},
-							{id: "Powerpoint_Next", label: "Powerpoint"},
-							{id: "Acrobat_Next", label: "Acrobat"},
-							{id: "Keynote_Next", label: "Keynote"},
-						]
+					choices: [
+						{ id: 'Key_Right', label: 'All' },
+						{ id: 'Powerpoint_Next', label: 'Powerpoint' },
+						{ id: 'Acrobat_Next', label: 'Acrobat' },
+						{ id: 'Keynote_Next', label: 'Keynote' },
+					],
 				},
 			],
 			callback: action_callback,
@@ -161,15 +158,14 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Application',
 					id: 'Key',
-					default: "Key_Left",
+					default: 'Key_Left',
 					tooltip: 'Application',
-					choices: 
-						[
-							{id: "Key_Left", label: "All"},
-							{id: "Powerpoint_Previous", label: "Powerpoint"},
-							{id: "Acrobat_Previous", label: "Acrobat"},
-							{id: "Keynote_Previous", label: "Keynote"},
-						]
+					choices: [
+						{ id: 'Key_Left', label: 'All' },
+						{ id: 'Powerpoint_Previous', label: 'Powerpoint' },
+						{ id: 'Acrobat_Previous', label: 'Acrobat' },
+						{ id: 'Keynote_Previous', label: 'Keynote' },
+					],
 				},
 			],
 			callback: action_callback,
@@ -229,10 +225,10 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'File',
 					id: 'File',
-					default: "1",
+					default: '1',
 					tooltip: 'File',
-					choices: 
-						choices.getDeltaValues()
+					choices: choices
+						.getDeltaValues()
 						.concat(choices.getChoicesForPresentationFolderFiles(instance.watchedPresentationFolderState.filesList)),
 				},
 			],
@@ -267,11 +263,9 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Slot',
 					id: 'Slot',
-					default: "Slot1",
+					default: 'Slot1',
 					tooltip: 'Slot',
-					choices: 
-						choices.getNextPrevDeltaValues()
-						.concat(choices.getChoicesForSlot()),
+					choices: choices.getNextPrevDeltaValues().concat(choices.getChoicesForSlot()),
 				},
 			],
 			callback: action_callback,
@@ -284,11 +278,9 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Slot',
 					id: 'Slot',
-					default: "Media1",
+					default: 'Media1',
 					tooltip: 'Slot',
-					choices: 
-						choices.getNextPrevDeltaValues()
-						.concat(choices.getChoicesForMedia()),
+					choices: choices.getNextPrevDeltaValues().concat(choices.getChoicesForMedia()),
 				},
 			],
 			callback: action_callback,
@@ -301,11 +293,9 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Slot',
 					id: 'Slot',
-					default: "Image1",
+					default: 'Image1',
 					tooltip: 'Slot',
-					choices: 
-						choices.getNextPrevDeltaValues()
-						.concat(choices.getChoicesForImage()),
+					choices: choices.getNextPrevDeltaValues().concat(choices.getChoicesForImage()),
 				},
 			],
 			callback: action_callback,
@@ -335,10 +325,10 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'File',
 					id: 'File',
-					default: "1",
+					default: '1',
 					tooltip: 'File',
-					choices: 
-						choices.getDeltaValues()
+					choices: choices
+						.getDeltaValues()
 						.concat(choices.getChoicesForMediaFolderFiles(instance.watchedMediaFolderState.filesList)),
 				},
 			],
@@ -367,7 +357,6 @@ exports.getActions = function (instance) {
 			callback: action_callback,
 		},
 
-
 		GoToSlide: {
 			name: 'Slide: Go to slide',
 			options: [
@@ -375,17 +364,16 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Application',
 					id: 'App',
-					default: "Generic",
+					default: 'Generic',
 					tooltip: 'Application',
-					choices: 
-						[
-							{id: "Generic", label: "All"},
-							{id: "Powerpoint_Go", label: "Powerpoint"},
-							{id: "Acrobat_Go", label: "Acrobat"},
-							{id: "Keynote_Go", label: "Keynote"},
-						]
+					choices: [
+						{ id: 'Generic', label: 'All' },
+						{ id: 'Powerpoint_Go', label: 'Powerpoint' },
+						{ id: 'Acrobat_Go', label: 'Acrobat' },
+						{ id: 'Keynote_Go', label: 'Keynote' },
+					],
 				},
-				getSlideNumber('Slide Nr.')
+				getSlideNumber('Slide Nr.'),
 			],
 			callback: action_callback,
 		},
@@ -437,8 +425,8 @@ exports.getActions = function (instance) {
 					id: 'destination',
 					default: 'Slot',
 					choices: [
-						{id: "Slot", label: "Slot"},
-						{id: "Folder", label: "Folder"},
+						{ id: 'Slot', label: 'Slot' },
+						{ id: 'Folder', label: 'Folder' },
 					],
 				},
 				{
@@ -514,7 +502,9 @@ exports.getActions = function (instance) {
 					choices: [
 						{ id: `Load_MediaPlayer#Previous`, label: `Previous` },
 						{ id: `Load_MediaPlayer#Next`, label: `Next` },
-					].concat(choices.getItemForSelectedOption()).concat(choices.getChoicesForMediaPlayer()),
+					]
+						.concat(choices.getItemForSelectedOption())
+						.concat(choices.getChoicesForMediaPlayer()),
 				},
 			],
 			callback: action_callback,
@@ -577,14 +567,14 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Type',
 					id: 'Key',
-					default: "StillImages",
+					default: 'StillImages',
 					tooltip: 'Type',
 					choices: [
-						{id: "StillImages", label: "Still Images"},
-						{id: "Media", label: "Media Slot"},
-						{id: "SlotPresentations", label: "Presentation Slot"},
-						{id: "PresentationFolders", label: "Presentation Folders"},
-						{id: "MediaFolders", label: "Media Folders"},
+						{ id: 'StillImages', label: 'Still Images' },
+						{ id: 'Media', label: 'Media Slot' },
+						{ id: 'SlotPresentations', label: 'Presentation Slot' },
+						{ id: 'PresentationFolders', label: 'Presentation Folders' },
+						{ id: 'MediaFolders', label: 'Media Folders' },
 					],
 				},
 				{
@@ -593,10 +583,9 @@ exports.getActions = function (instance) {
 					id: 'StillImages',
 					tooltip: 'Set <<All>> to clear all slots\nSet <<Selected>> to clear selected slot',
 					default: 'All',
-					choices: [
-						{ id: `All`, label: `All` },
-					].concat(choices.getItemForSelectedOption())
-					.concat(choices.getChoicesForImage()),
+					choices: [{ id: `All`, label: `All` }]
+						.concat(choices.getItemForSelectedOption())
+						.concat(choices.getChoicesForImage()),
 					isVisible: (opt, _d) => opt.Key == 'StillImages',
 				},
 				{
@@ -605,10 +594,9 @@ exports.getActions = function (instance) {
 					id: 'Media',
 					tooltip: 'Set <<All>> to clear all slots\nSet <<Selected>> to clear selected slot',
 					default: 'All',
-					choices: [
-						{ id: `All`, label: `All` },
-					].concat(choices.getItemForSelectedOption())
-					.concat(choices.getChoicesForMedia()),
+					choices: [{ id: `All`, label: `All` }]
+						.concat(choices.getItemForSelectedOption())
+						.concat(choices.getChoicesForMedia()),
 					isVisible: (opt, _d) => opt.Key == 'Media',
 				},
 				{
@@ -617,10 +605,9 @@ exports.getActions = function (instance) {
 					id: 'SlotPresentations',
 					tooltip: 'Set <<All>> to clear all slots\nSet <<Selected>> to clear selected slot',
 					default: 'All',
-					choices: [
-						{ id: `All`, label: `All` },
-					].concat(choices.getItemForSelectedOption())
-					.concat(choices.getChoicesForSlot()),
+					choices: [{ id: `All`, label: `All` }]
+						.concat(choices.getItemForSelectedOption())
+						.concat(choices.getChoicesForSlot()),
 					isVisible: (opt, _d) => opt.Key == 'SlotPresentations',
 				},
 				{
@@ -629,9 +616,7 @@ exports.getActions = function (instance) {
 					id: 'PresentationFolders',
 					tooltip: 'Set <<All>> to clear all slots',
 					default: 'All',
-					choices: [
-						{ id: `All`, label: `All` },
-					].concat(choices.getChoicesForPresentationFolder()),
+					choices: [{ id: `All`, label: `All` }].concat(choices.getChoicesForPresentationFolder()),
 					isVisible: (opt, _d) => opt.Key == 'PresentationFolders',
 				},
 				{
@@ -640,9 +625,7 @@ exports.getActions = function (instance) {
 					id: 'MediaFolders',
 					tooltip: 'Set <<All>> to clear all slots',
 					default: 'All',
-					choices: [
-						{ id: `All`, label: `All` },
-					].concat(choices.getChoicesForMediaFolder()),
+					choices: [{ id: `All`, label: `All` }].concat(choices.getChoicesForMediaFolder()),
 					isVisible: (opt, _d) => opt.Key == 'MediaFolders',
 				},
 			],
@@ -664,7 +647,6 @@ exports.getActions = function (instance) {
 					default: 'Slot1',
 					choices: choices.getItemForSelectedOption().concat(choices.getChoicesForSlot()),
 				},
-				
 			],
 			callback: action_callback,
 		},
@@ -684,7 +666,6 @@ exports.getActions = function (instance) {
 					default: 'Media1',
 					choices: choices.getItemForSelectedOption().concat(choices.getChoicesForMedia()),
 				},
-				
 			],
 			callback: action_callback,
 		},
@@ -704,7 +685,6 @@ exports.getActions = function (instance) {
 					default: 'Image1',
 					choices: choices.getItemForSelectedOption().concat(choices.getChoicesForImage()),
 				},
-				
 			],
 			callback: action_callback,
 		},
@@ -747,10 +727,9 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Tab',
 					id: 'Tab',
-					default: "Tab1",
+					default: 'Tab1',
 					tooltip: 'Tab',
-					choices: choices.getNextPrevDeltaValues()
-								.concat(choices.getChoicesForTabs(instance.browserState.tabsList)),
+					choices: choices.getNextPrevDeltaValues().concat(choices.getChoicesForTabs(instance.browserState.tabsList)),
 				},
 			],
 			callback: action_callback,
@@ -763,7 +742,7 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Tab',
 					id: 'Tab',
-					default: "Tab1",
+					default: 'Tab1',
 					tooltip: 'Tab',
 					choices: choices.getChoicesForTabs(instance.browserState.tabsList),
 				},
@@ -790,12 +769,12 @@ exports.getActions = function (instance) {
 					type: 'dropdown',
 					label: 'Application',
 					id: 'Application',
-					default: "PowerPoint",
+					default: 'PowerPoint',
 					tooltip: 'Application',
 					choices: [
-						{ id: 'PowerPoint', label: 'PowerPoint'},
-						{ id: 'PDF', label: 'PDF'},
-						{ id: 'Webpage', label: 'Webpage'},
+						{ id: 'PowerPoint', label: 'PowerPoint' },
+						{ id: 'PDF', label: 'PDF' },
+						{ id: 'Webpage', label: 'Webpage' },
 					],
 				},
 			],
@@ -878,10 +857,10 @@ exports.getActions = function (instance) {
 					id: 'action',
 					default: 'play',
 					choices: [
-						{ id: 'play', label: 'Play'},
-						{ id: 'pause', label: 'Pause'},
-						{ id: 'stop', label: 'Stop'},
-						{ id: 'toggle', label: 'Toggle (Play/Pause)'},
+						{ id: 'play', label: 'Play' },
+						{ id: 'pause', label: 'Pause' },
+						{ id: 'stop', label: 'Stop' },
+						{ id: 'toggle', label: 'Toggle (Play/Pause)' },
 					],
 				},
 			],
@@ -897,8 +876,8 @@ exports.getActions = function (instance) {
 					id: 'direction',
 					default: 'forward',
 					choices: [
-						{ id: 'forward', label: 'Forward'},
-						{ id: 'backward', label: 'Backward'},
+						{ id: 'forward', label: 'Forward' },
+						{ id: 'backward', label: 'Backward' },
 					],
 				},
 				{
@@ -919,7 +898,7 @@ exports.getActions = function (instance) {
 
 exports.getCommandV2 = async function (action, instance) {
 	let data = {
-		"command": action.actionId,
+		command: action.actionId,
 	}
 
 	let slideNumber = 1
@@ -953,60 +932,59 @@ exports.getCommandV2 = async function (action, instance) {
 		case 'Display_Image':
 			let key = action.options.Key
 			let bankNumber = null
-			if(action.options.Key == 'selected'){
+			if (action.options.Key == 'selected') {
 				bankNumber = instance.getVariableValue('image_slot_selected_number')
-			}
-			else{
+			} else {
 				bankNumber = utils.extcractNumber(key)
 			}
-			if(!bankNumber){
+			if (!bankNumber) {
 				// Test | Freeze | Black
 				data.command = key
-			}else{
+			} else {
 				data.parameters = {
 					bank_number: bankNumber,
 				}
 			}
 			break
 		case 'Load_MediaPlayer':
-			if(action.options.Key.includes('#Next') || action.options.Key.includes('#Previous')){
+			if (action.options.Key.includes('#Next') || action.options.Key.includes('#Previous')) {
 				data.parameters = {
 					bank_number: action.options.Key.split('#')[1],
 				}
-			}else if(action.options.Key == 'selected'){
+			} else if (action.options.Key == 'selected') {
 				data.parameters = {
 					bank_number: instance.getVariableValue('media_slot_selected_number'),
 				}
-			}else{
+			} else {
 				data.parameters = {
 					bank_number: utils.extcractNumber(action.options.Key),
 				}
 			}
 			break
 		case 'SetSelected_PresentationFolder':
-			if(action.options.Key == 'Next' || action.options.Key == 'Previous'){
+			if (action.options.Key == 'Next' || action.options.Key == 'Previous') {
 				data.parameters = {
 					bank_number: action.options.Key,
 				}
-			}else{
+			} else {
 				data.parameters = {
 					bank_number: utils.extcractNumber(action.options.Key),
 				}
 			}
-			break;
+			break
 		case 'open_presentation_from_watched_presentation_folder':
 			data.command = 'OpenStart_Presentation'
 			data.parameters = {
-				file_path: instance.watchedPresentationFolderState.filesList[utils.extcractNumber(action.options.FileNumber) - 1],
+				file_path:
+					instance.watchedPresentationFolderState.filesList[utils.extcractNumber(action.options.FileNumber) - 1],
 				slideNr: parseInt(await instance.parseVariablesInString(action.options.SlideNumber)),
 				isFullscreen: action.options.Fullscreen,
 			}
 			break
 		case 'OpenStart_Presentation':
 			let path = await instance.parseVariablesInString(action.options.Filename)
-			
-			if(!path)
-				return
+
+			if (!path) return
 
 			data.parameters = {
 				file_path: path,
@@ -1015,20 +993,19 @@ exports.getCommandV2 = async function (action, instance) {
 			}
 			break
 		case 'SetSelected_MediaFolder':
-
-			if(action.options.Key == 'Next' || action.options.Key == 'Previous'){
+			if (action.options.Key == 'Next' || action.options.Key == 'Previous') {
 				data.parameters = {
 					bank_number: action.options.Key,
 				}
-			}else{
+			} else {
 				data.parameters = {
 					bank_number: utils.extcractNumber(action.options.Key),
 				}
 			}
-			break;
+			break
 		case 'OpenStart_Presentation_Slot':
 			let slot = action.options.Key
-			if(slot == 'selected'){
+			if (slot == 'selected') {
 				slot = instance.getVariableValue('presentation_slot_selected_number')
 			}
 			data.parameters = {
@@ -1038,10 +1015,10 @@ exports.getCommandV2 = async function (action, instance) {
 			}
 			break
 		case 'GoToSlide':
-			data.command = action.options.App,
-			data.parameters = {
-				slideNr: parseInt(await instance.parseVariablesInString(action.options.SlideNumber))
-			}
+			;((data.command = action.options.App),
+				(data.parameters = {
+					slideNr: parseInt(await instance.parseVariablesInString(action.options.SlideNumber)),
+				}))
 			break
 		case 'Powerpoint_Section_Go':
 			if (action.options.Section === 'Previous' || action.options.Section === 'Next') {
@@ -1053,17 +1030,16 @@ exports.getCommandV2 = async function (action, instance) {
 			}
 			break
 		case 'CapturePresentation':
-			if(action.options.destination == 'Slot'){
+			if (action.options.destination == 'Slot') {
 				let slot = action.options.Slot
-				if(slot == 'selected'){
+				if (slot == 'selected') {
 					slot = instance.getVariableValue('presentation_slot_selected_number')
 				}
 				data.command = 'CapturePresentationSlot'
 				data.parameters = {
 					bank_number: utils.extcractNumber(slot),
 				}
-			}
-			else if (action.options.destination == 'Folder'){
+			} else if (action.options.destination == 'Folder') {
 				data.command = 'CaptureFolder'
 				data.parameters = {
 					bank_number: utils.extcractNumber(action.options.Folder),
@@ -1082,7 +1058,8 @@ exports.getCommandV2 = async function (action, instance) {
 			selectPresentationFile(
 				instance,
 				action.options.File,
-				choices.getDeltaValues().some(item => item.id === action.options.File))
+				choices.getDeltaValues().some((item) => item.id === action.options.File),
+			)
 			instance.checkFeedbacks('presentation_file_selected', 'presentation_file_displayed')
 			break
 		case 'Change_selected_media_in_watched_media_folder':
@@ -1090,7 +1067,8 @@ exports.getCommandV2 = async function (action, instance) {
 			selectMediaFile(
 				instance,
 				action.options.File,
-				choices.getDeltaValues().some(item => item.id === action.options.File))
+				choices.getDeltaValues().some((item) => item.id === action.options.File),
+			)
 			instance.checkFeedbacks('media_file_selected')
 			break
 		case 'select_presentation_slot':
@@ -1098,7 +1076,8 @@ exports.getCommandV2 = async function (action, instance) {
 			selectPresentationSlot(
 				instance,
 				action.options.Slot,
-				choices.getNextPrevDeltaValues().some(item => item.id === action.options.Slot))
+				choices.getNextPrevDeltaValues().some((item) => item.id === action.options.Slot),
+			)
 			instance.checkFeedbacks('presentation_slot_selected', 'slot_exist', 'slot_displayed')
 			break
 		case 'select_media_slot':
@@ -1106,7 +1085,8 @@ exports.getCommandV2 = async function (action, instance) {
 			selectMediaSlot(
 				instance,
 				action.options.Slot,
-				choices.getNextPrevDeltaValues().some(item => item.id === action.options.Slot))
+				choices.getNextPrevDeltaValues().some((item) => item.id === action.options.Slot),
+			)
 			instance.checkFeedbacks('media_slot_selected', 'Media_loaded', 'Media_playing')
 			break
 		case 'select_image_slot':
@@ -1114,31 +1094,27 @@ exports.getCommandV2 = async function (action, instance) {
 			selectImageSlot(
 				instance,
 				action.options.Slot,
-				choices.getNextPrevDeltaValues().some(item => item.id === action.options.Slot))
+				choices.getNextPrevDeltaValues().some((item) => item.id === action.options.Slot),
+			)
 			instance.checkFeedbacks('image_slot_selected', 'loaded', 'displayed')
 			break
 		case 'Clear':
 			let clear_type_key = action.options.Key
 			let clearType = action.options[clear_type_key]
 			let source = ''
-			if(clearType == 'All'){
+			if (clearType == 'All') {
 				source = 'All'
-			}
-			else if(clearType == 'selected'){
-				if(clear_type_key == 'SlotPresentations'){
+			} else if (clearType == 'selected') {
+				if (clear_type_key == 'SlotPresentations') {
 					source = instance.getVariableValue('presentation_slot_selected_number')
-				}
-				else if(clear_type_key == 'Media'){
+				} else if (clear_type_key == 'Media') {
 					source = instance.getVariableValue('media_slot_selected_number')
-				}
-				else if(clear_type_key == 'StillImages'){
+				} else if (clear_type_key == 'StillImages') {
 					source = instance.getVariableValue('image_slot_selected_number')
 				}
-			}
-			else{
+			} else {
 				source = utils.extcractNumber(clearType)
 			}
-			
 
 			data.parameters = {
 				clear_type_key: clear_type_key,
@@ -1148,7 +1124,7 @@ exports.getCommandV2 = async function (action, instance) {
 		case 'SetPresentationSlotPath':
 			{
 				let key = action.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = instance.getVariableValue('presentation_slot_selected_number')
 				}
 				data.parameters = {
@@ -1156,7 +1132,7 @@ exports.getCommandV2 = async function (action, instance) {
 					file_path: await instance.parseVariablesInString(action.options.FilePath),
 				}
 
-				if(!data.parameters.file_path){
+				if (!data.parameters.file_path) {
 					// Don't send the command
 					data.command = ''
 				}
@@ -1165,7 +1141,7 @@ exports.getCommandV2 = async function (action, instance) {
 		case 'SetMediaSlotPath':
 			{
 				let key = action.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = instance.getVariableValue('media_slot_selected_number')
 				}
 				data.parameters = {
@@ -1173,7 +1149,7 @@ exports.getCommandV2 = async function (action, instance) {
 					file_path: await instance.parseVariablesInString(action.options.FilePath),
 				}
 
-				if(!data.parameters.file_path){
+				if (!data.parameters.file_path) {
 					// Don't send the command
 					data.command = ''
 				}
@@ -1182,7 +1158,7 @@ exports.getCommandV2 = async function (action, instance) {
 		case 'SetImageSlotPath':
 			{
 				let key = action.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = instance.getVariableValue('image_slot_selected_number')
 				}
 				data.parameters = {
@@ -1190,7 +1166,7 @@ exports.getCommandV2 = async function (action, instance) {
 					file_path: await instance.parseVariablesInString(action.options.FilePath),
 				}
 
-				if(!data.parameters.file_path){
+				if (!data.parameters.file_path) {
 					// Don't send the command
 					data.command = ''
 				}
@@ -1207,11 +1183,13 @@ exports.getCommandV2 = async function (action, instance) {
 			break
 		case 'SwitchTab':
 			{
-				if(action.options.Tab == '-1' || action.options.Tab == '1'){
-					let activeTabIndex = instance.browserState.tabsList.findIndex(item => item.id === instance.browserState.activeTabId)
+				if (action.options.Tab == '-1' || action.options.Tab == '1') {
+					let activeTabIndex = instance.browserState.tabsList.findIndex(
+						(item) => item.id === instance.browserState.activeTabId,
+					)
 					let tabIndex = activeTabIndex + parseInt(action.options.Tab)
 
-					if(tabIndex < 0 || tabIndex >= instance.browserState.tabsList.length){
+					if (tabIndex < 0 || tabIndex >= instance.browserState.tabsList.length) {
 						data.command = ''
 						break
 					}
@@ -1219,7 +1197,7 @@ exports.getCommandV2 = async function (action, instance) {
 					data.parameters = {
 						tabId: instance.browserState.tabsList[tabIndex].id,
 					}
-				}else{
+				} else {
 					data.parameters = {
 						tabId: instance.browserState.tabsList[parseInt(utils.extcractNumber(action.options.Tab)) - 1].id,
 					}
@@ -1309,30 +1287,24 @@ exports.getCommandV2 = async function (action, instance) {
 	return data
 }
 
-
 function selectPresentationFile(instance, selectionValue, delta = false) {
 	var self = instance
 	const values = {}
 	let filesList = self.watchedPresentationFolderState.filesList
-	
-	if(!filesList || filesList.length == 0)
-		return
+
+	if (!filesList || filesList.length == 0) return
 
 	let sIndex = 0
-	if(delta){
+	if (delta) {
 		let oldSelectedNumber = self.getVariableValue('watched_presentation_folder_selected_presentation_number')
-		if(!oldSelectedNumber)
-			oldSelectedNumber = 1
+		if (!oldSelectedNumber) oldSelectedNumber = 1
 		let newSelectedNumber = parseInt(oldSelectedNumber) + parseInt(selectionValue)
-		sIndex = ((newSelectedNumber - 1) % filesList.length + filesList.length) % filesList.length;
-	}
-	else {
+		sIndex = (((newSelectedNumber - 1) % filesList.length) + filesList.length) % filesList.length
+	} else {
 		// Extcract number
 		let newSelectedNumber = parseInt(utils.extcractNumber(selectionValue))
-		if(newSelectedNumber > filesList.length)
-			return
+		if (newSelectedNumber > filesList.length) return
 		sIndex = newSelectedNumber - 1
-
 	}
 	values['watched_presentation_folder_selected_presentation_number'] = sIndex + 1
 	values['watched_presentation_folder_total_files_count'] = filesList.length
@@ -1346,24 +1318,19 @@ function selectMediaFile(instance, selectionValue, delta = false) {
 	var self = instance
 	const values = {}
 	let filesList = self.watchedMediaFolderState.filesList
-	
-	if(!filesList || filesList.length == 0)
-		return
+
+	if (!filesList || filesList.length == 0) return
 	let sIndex = 0
-	if(delta){
+	if (delta) {
 		let oldSelectedNumber = self.getVariableValue('watched_media_folder_selected_media_number')
-		if(!oldSelectedNumber)
-			oldSelectedNumber = 1
+		if (!oldSelectedNumber) oldSelectedNumber = 1
 		let newSelectedNumber = parseInt(oldSelectedNumber) + parseInt(selectionValue)
-		sIndex = ((newSelectedNumber - 1) % filesList.length + filesList.length) % filesList.length;
-	}
-	else {
+		sIndex = (((newSelectedNumber - 1) % filesList.length) + filesList.length) % filesList.length
+	} else {
 		// Extcract number
 		let newSelectedNumber = parseInt(utils.extcractNumber(selectionValue))
-		if(newSelectedNumber > filesList.length)
-			return
+		if (newSelectedNumber > filesList.length) return
 		sIndex = newSelectedNumber - 1
-
 	}
 	values['watched_media_folder_selected_media_number'] = sIndex + 1
 	values['watched_media_folder_total_files_count'] = filesList.length
@@ -1372,15 +1339,12 @@ function selectMediaFile(instance, selectionValue, delta = false) {
 	self.setVariableValues(values)
 }
 
-
-function getNewSelectedNumber(input, current, max, delta){
+function getNewSelectedNumber(input, current, max, delta) {
 	let newSelectedNumber = 1
-	if(delta){
-		if(!current)
-			current = 1
-		newSelectedNumber = (parseInt(current) - 1 + parseInt(input) + max) % max + 1;
-	}
-	else {
+	if (delta) {
+		if (!current) current = 1
+		newSelectedNumber = ((parseInt(current) - 1 + parseInt(input) + max) % max) + 1
+	} else {
 		newSelectedNumber = parseInt(utils.extcractNumber(input))
 	}
 	return newSelectedNumber
@@ -1388,30 +1352,42 @@ function getNewSelectedNumber(input, current, max, delta){
 
 function selectPresentationSlot(instance, selectionValue, delta = false) {
 	let newSelectedNumber = getNewSelectedNumber(
-		selectionValue, instance.getVariableValue('presentation_slot_selected_number'), numberOfPresentationSlots, delta)
-		
+		selectionValue,
+		instance.getVariableValue('presentation_slot_selected_number'),
+		numberOfPresentationSlots,
+		delta,
+	)
+
 	instance.setVariableValues({
-		'presentation_slot_selected_number': newSelectedNumber,
-		'presentation_slot_selected_filename': instance.getVariableValue(`presentation_slot${newSelectedNumber}`),
+		presentation_slot_selected_number: newSelectedNumber,
+		presentation_slot_selected_filename: instance.getVariableValue(`presentation_slot${newSelectedNumber}`),
 	})
 }
 
 function selectMediaSlot(instance, selectionValue, delta = false) {
 	let newSelectedNumber = getNewSelectedNumber(
-		selectionValue, instance.getVariableValue('media_slot_selected_number'), numberOfMediaPlayerSlots, delta)
+		selectionValue,
+		instance.getVariableValue('media_slot_selected_number'),
+		numberOfMediaPlayerSlots,
+		delta,
+	)
 
 	instance.setVariableValues({
-		'media_slot_selected_number': newSelectedNumber,
-		'media_slot_selected_filename': instance.getVariableValue(`media_slot${newSelectedNumber}`),
+		media_slot_selected_number: newSelectedNumber,
+		media_slot_selected_filename: instance.getVariableValue(`media_slot${newSelectedNumber}`),
 	})
 }
 
 function selectImageSlot(instance, selectionValue, delta = false) {
 	let newSelectedNumber = getNewSelectedNumber(
-		selectionValue, instance.getVariableValue('image_slot_selected_number'), numberOfImagesSlots, delta)
+		selectionValue,
+		instance.getVariableValue('image_slot_selected_number'),
+		numberOfImagesSlots,
+		delta,
+	)
 
 	instance.setVariableValues({
-		'image_slot_selected_number': newSelectedNumber,
-		'image_slot_selected_filename': instance.getVariableValue(`image_slot${newSelectedNumber}`),
+		image_slot_selected_number: newSelectedNumber,
+		image_slot_selected_filename: instance.getVariableValue(`image_slot${newSelectedNumber}`),
 	})
 }
