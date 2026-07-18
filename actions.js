@@ -12,6 +12,38 @@ function getSlideNumber(txtLabel) {
 	}
 }
 
+const BOOLEAN_SETTING_OPERATION_CHOICES = [
+	{ id: 'toggle', label: 'Toggle' },
+	{ id: 'enable', label: 'Enable' },
+	{ id: 'disable', label: 'Disable' },
+]
+
+function getBooleanSettingAction(name, callback) {
+	return {
+		name,
+		options: [
+			{
+				type: 'dropdown',
+				label: 'Operation',
+				id: 'Operation',
+				default: 'toggle',
+				choices: BOOLEAN_SETTING_OPERATION_CHOICES,
+			},
+		],
+		callback,
+	}
+}
+
+function getPresenterScreenChoices(instance) {
+	const availableDisplays = instance.settingsState?.availableDisplays ?? []
+	return [{ id: 'automatic', label: 'Automatic' }].concat(
+		availableDisplays.map((display) => ({
+			id: `specific:${display.display_id}`,
+			label: `${display.display_name} (${display.display_id})`,
+		})),
+	)
+}
+
 function sendMessage(socket, message){
 	// Convert the message to a Buffer
     const messageBuffer = Buffer.from(message, 'utf-8');
@@ -770,6 +802,73 @@ exports.getActions = function (instance) {
 			callback: action_callback,
 		},
 
+		Settings_main_presenter_screen: {
+			name: 'Settings: Main presenter screen',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Presenter screen',
+					id: 'PresenterScreen',
+					default: 'automatic',
+					choices: getPresenterScreenChoices(instance),
+				},
+			],
+			callback: action_callback,
+		},
+
+		Settings_presentation_file_handling: {
+			name: 'Settings: Presentation file handling',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'File handling',
+					id: 'Value',
+					default: 'automatic',
+					choices: [
+						{ id: 'automatic', label: 'Automatic' },
+						{ id: 'controlled', label: 'Controlled' },
+					],
+				},
+			],
+			callback: action_callback,
+		},
+
+		Settings_seamless_switching: getBooleanSettingAction('Settings: Seamless switching', action_callback),
+		Settings_toggle_images_on_off_with_one_button: getBooleanSettingAction(
+			'Settings: Toggle images on/off with one button',
+			action_callback,
+		),
+		Settings_powerpoint_hide_presenter: getBooleanSettingAction(
+			'Settings: PowerPoint hide presenter (mac)',
+			action_callback,
+		),
+		Settings_google_slides_use_presenter_view: getBooleanSettingAction(
+			'Settings: Google Slides use presenter view',
+			action_callback,
+		),
+
+		Settings_pdf_controlled_program: {
+			name: 'Settings: PDF controlled program',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'PDF application',
+					id: 'Value',
+					default: 'skim',
+					choices: [
+						{ id: 'skim', label: 'Skim' },
+						{ id: 'adobe_acrobat', label: 'Adobe Acrobat' },
+					],
+				},
+			],
+			callback: action_callback,
+		},
+
+		Settings_automatically_check_for_updates: getBooleanSettingAction(
+			'Settings: Automatically check for updates',
+			action_callback,
+		),
+
 		Presentation_Media_Control: {
 			name: 'Presentation: PowerPoint Media Control',
 			options: [
@@ -1139,6 +1238,54 @@ exports.getCommandV2 = async function (action, instance) {
 				data.parameters = {
 					application: action.options.Application,
 				}
+			}
+			break
+		case 'Settings_main_presenter_screen':
+			{
+				data.command = 'SetSetting'
+				data.parameters = {
+					setting: 'main_presenter_screen',
+					value: {
+						selection: 'automatic',
+					},
+				}
+
+				if (action.options.PresenterScreen !== 'automatic') {
+					const displayId = Number(action.options.PresenterScreen?.replace('specific:', ''))
+					if (!Number.isInteger(displayId)) {
+						data.command = ''
+						break
+					}
+					data.parameters.value = {
+						selection: 'specific',
+						configured_display_id: displayId,
+					}
+				}
+			}
+			break
+		case 'Settings_presentation_file_handling':
+		case 'Settings_pdf_controlled_program':
+			data.command = 'SetSetting'
+			data.parameters = {
+				setting: action.actionId.replace('Settings_', ''),
+				value: action.options.Value,
+			}
+			break
+		case 'Settings_seamless_switching':
+		case 'Settings_toggle_images_on_off_with_one_button':
+		case 'Settings_powerpoint_hide_presenter':
+		case 'Settings_google_slides_use_presenter_view':
+		case 'Settings_automatically_check_for_updates':
+			data.parameters = {
+				setting: action.actionId.replace('Settings_', ''),
+			}
+			if (action.options.Operation === 'toggle') {
+				data.command = 'ToggleSetting'
+			} else if (action.options.Operation === 'enable' || action.options.Operation === 'disable') {
+				data.command = 'SetSetting'
+				data.parameters.value = action.options.Operation === 'enable'
+			} else {
+				data.command = ''
 			}
 			break
 		case 'Presentation_Media_Control':

@@ -1,9 +1,43 @@
 const { combineRgb } = require('@companion-module/base')
 var choices = require('./choices')
 var utils = require('./utils')
+
+const BOOLEAN_SETTING_FEEDBACK_DEFINITIONS = [
+	{ id: 'settings_seamless_switching', name: 'Seamless switching' },
+	{ id: 'settings_run_at_system_startup_enabled', name: 'Run at system startup' },
+	{ id: 'settings_toggle_images_on_off_with_one_button', name: 'Toggle images on/off with one button' },
+	{ id: 'settings_powerpoint_hide_presenter', name: 'PowerPoint hide presenter', platformLabel: ' (mac)' },
+	{ id: 'settings_google_slides_use_presenter_view', name: 'Google Slides use presenter view' },
+	{ id: 'settings_automatically_check_for_updates', name: 'Automatically check for updates' },
+]
+
+exports.booleanSettingFeedbackIds = BOOLEAN_SETTING_FEEDBACK_DEFINITIONS.map((definition) => definition.id)
+
+function getBooleanSettingFeedback(instance, name, variableId, platformLabel = '') {
+	return {
+		type: 'boolean',
+		name: `Settings: ${name} is on${platformLabel}`,
+		description: `When ${name} is on, change the style${platformLabel}`,
+		options: [],
+		defaultStyle: {
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 90, 0),
+		},
+		callback: function (_feedback) {
+			return instance.getVariableValue(variableId) === true
+		},
+	}
+}
+
 exports.getFeedbacks = function (instance) {
 	var self = instance
 	return {
+		...Object.fromEntries(
+			BOOLEAN_SETTING_FEEDBACK_DEFINITIONS.map((definition) => [
+				definition.id,
+				getBooleanSettingFeedback(self, definition.name, definition.id, definition.platformLabel),
+			]),
+		),
 		loaded: {
 			type: 'boolean',
 			name: 'Still Image exists',

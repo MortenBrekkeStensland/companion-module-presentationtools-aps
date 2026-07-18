@@ -12,6 +12,66 @@ exports.getPresets = function (instance) {
 	var self = instance
 	var presets = {}
 
+	// Settings
+	presets['SettingsSeamlessSwitching'] = getSettingsPreset({
+		name: 'Seamless switching',
+		text: `Seamless\n$(${instance.label}:settings_seamless_switching)`,
+		actionId: 'Settings_seamless_switching',
+		actionOptions: { Operation: 'toggle' },
+		feedbackId: 'settings_seamless_switching',
+	})
+	presets['SettingsToggleImages'] = getSettingsPreset({
+		name: 'Toggle images on/off with one button',
+		text: `Images Toggle\n$(${instance.label}:settings_toggle_images_on_off_with_one_button)`,
+		actionId: 'Settings_toggle_images_on_off_with_one_button',
+		actionOptions: { Operation: 'toggle' },
+		feedbackId: 'settings_toggle_images_on_off_with_one_button',
+	})
+	presets['SettingsGoogleSlidesPresenterView'] = getSettingsPreset({
+		name: 'Google Slides use presenter view',
+		text: `Google Presenter\n$(${instance.label}:settings_google_slides_use_presenter_view)`,
+		actionId: 'Settings_google_slides_use_presenter_view',
+		actionOptions: { Operation: 'toggle' },
+		feedbackId: 'settings_google_slides_use_presenter_view',
+	})
+	presets['SettingsAutomaticallyCheckForUpdates'] = getSettingsPreset({
+		name: 'Automatically check for updates',
+		text: `Auto Updates\n$(${instance.label}:settings_automatically_check_for_updates)`,
+		actionId: 'Settings_automatically_check_for_updates',
+		actionOptions: { Operation: 'toggle' },
+		feedbackId: 'settings_automatically_check_for_updates',
+	})
+	presets['SettingsMainPresenterScreenAutomatic'] = getSettingsPreset({
+		name: 'Main presenter screen: Automatic',
+		text: `Effective Display\n$(${instance.label}:settings_main_presenter_screen_effective_display_name)`,
+		actionId: 'Settings_main_presenter_screen',
+		actionOptions: { PresenterScreen: 'automatic' },
+	})
+	presets['SettingsPowerPointHidePresenter'] = getSettingsPreset({
+		name: 'PowerPoint hide presenter (mac)',
+		text: `PowerPoint Presenter\n$(${instance.label}:settings_powerpoint_hide_presenter)`,
+		actionId: 'Settings_powerpoint_hide_presenter',
+		actionOptions: { Operation: 'toggle' },
+		feedbackId: 'settings_powerpoint_hide_presenter',
+	})
+	presets['SettingsConfiguredDisplayId'] = getSettingsPreset({
+		name: 'Configured presenter display ID',
+		text: `Configured Display ID\n$(${instance.label}:settings_main_presenter_screen_configured_display_id)`,
+	})
+	presets['SettingsEffectiveDisplayId'] = getSettingsPreset({
+		name: 'Effective presenter display ID',
+		text: `Effective Display ID\n$(${instance.label}:settings_main_presenter_screen_effective_display_id)`,
+	})
+	presets['SettingsRunAtSystemStartup'] = getSettingsPreset({
+		name: 'Run at system startup status',
+		text: `Run at Startup\n$(${instance.label}:settings_run_at_system_startup_enabled)`,
+		feedbackId: 'settings_run_at_system_startup_enabled',
+	})
+	presets['SettingsInstalledPresentationApps'] = getSettingsPreset({
+		name: 'Installed presentation applications',
+		text: `Installed Apps\n$(${instance.label}:settings_installed_presentation_apps)`,
+	})
+
 
 	//Presentation Control
 	presets['Navigation_PrevFS'] = {
@@ -2753,6 +2813,46 @@ function getPresetforWatchedPresentationFolderFilesSelect(lbl, txt, cr, FileNumb
 	}
 }
 
+
+function getSettingsPreset({ name, text, actionId, actionOptions = {}, feedbackId }) {
+	return {
+		type: 'button',
+		category: 'Settings',
+		name,
+		style: {
+			text,
+			alignment: 'center:center',
+			size: 'auto',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: actionId
+					? [
+							{
+								actionId,
+								options: actionOptions,
+							},
+						]
+					: [],
+				up: [],
+			},
+		],
+		feedbacks: feedbackId
+			? [
+					{
+						feedbackId,
+						options: {},
+						style: {
+							color: combineRgb(255, 255, 255),
+							bgcolor: combineRgb(0, 90, 0),
+						},
+					},
+				]
+			: [],
+	}
+}
 
 
 function getPresetforMediaFolder(instanceLabel, lbl, txt, i, cr, FolderNumber) {

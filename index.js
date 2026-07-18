@@ -15,6 +15,22 @@ var states = require('./states')
 var presets = require('./presets')
 var utils = require('./utils')
 
+const SETTINGS_VARIABLE_DEFINITIONS = [
+	{ name: 'settings: Main presenter screen selection', variableId: 'settings_main_presenter_screen_selection' },
+	{ name: 'settings: Main presenter screen configured display ID', variableId: 'settings_main_presenter_screen_configured_display_id' },
+	{ name: 'settings: Main presenter screen effective display ID', variableId: 'settings_main_presenter_screen_effective_display_id' },
+	{ name: 'settings: Main presenter screen effective display name', variableId: 'settings_main_presenter_screen_effective_display_name' },
+	{ name: 'settings: Presentation file handling', variableId: 'settings_presentation_file_handling' },
+	{ name: 'settings: Seamless switching', variableId: 'settings_seamless_switching' },
+	{ name: 'settings: Run at system startup enabled', variableId: 'settings_run_at_system_startup_enabled' },
+	{ name: 'settings: Toggle images on/off with one button', variableId: 'settings_toggle_images_on_off_with_one_button' },
+	{ name: 'settings: PowerPoint hide presenter (mac)', variableId: 'settings_powerpoint_hide_presenter' },
+	{ name: 'settings: Google Slides use presenter view', variableId: 'settings_google_slides_use_presenter_view' },
+	{ name: 'settings: PDF controlled program', variableId: 'settings_pdf_controlled_program' },
+	{ name: 'settings: Automatically check for updates', variableId: 'settings_automatically_check_for_updates' },
+	{ name: 'settings: Installed presentation apps', variableId: 'settings_installed_presentation_apps' },
+]
+
 class APSInstance extends InstanceBase {
 	constructor(internal) {
 		super(internal)
@@ -69,6 +85,9 @@ class APSInstance extends InstanceBase {
 			tabsList: [],
 			seamlessOpenWebpageInProgress: false,
 			seamlessFullScreenInProgress: false,
+		}
+		this.settingsState = {
+			availableDisplays: [],
 		}
 
 		this.powerPointSectionsState = {
@@ -324,6 +343,19 @@ class APSInstance extends InstanceBase {
 							self.generalState.activeApp = jsonData.data.application
 							self.checkFeedbacks('active_app')
 						}
+						else if (jsonData.action === 'settings') {
+							self.setSettingsVariables(jsonData.data)
+						}
+						else if (jsonData.action === 'settings_update_result') {
+							const result = jsonData.data ?? {}
+							if (!result.success) {
+								const error = result.error?.message ?? result.error?.code ?? 'Unknown error'
+								self.log('warn', `Settings update failed for ${result.setting ?? 'unknown setting'}: ${error}`)
+							}
+							if (Array.isArray(result.warnings) && result.warnings.length > 0) {
+								self.log('warn', `Settings update warning for ${result.setting}: ${result.warnings.join(', ')}`)
+							}
+						}
 						else if (jsonData.action === 'seamless_open_webpage_in_progress') {
 							self.browserState.seamlessOpenWebpageInProgress = jsonData.data.seamless_open_webpage_in_progress
 							self.checkFeedbacks('seamless_open_webpage_in_progress')
@@ -459,6 +491,7 @@ class APSInstance extends InstanceBase {
 			{ name: 'Media player: Time left', variableId: 'Media_time_left' },
 			{ name: 'Media player: Time elapsed', variableId: 'Media_time_elapsed' },
 			{ name: 'Media player: Time duration', variableId: 'Media_time_duration' },
+			...SETTINGS_VARIABLE_DEFINITIONS,
 		]
 		for (let i = 1; i <= self.powerPointSectionsState.sections.length; i++) {
 			variables.push(
@@ -590,6 +623,9 @@ class APSInstance extends InstanceBase {
 			Media_time_elapsed: '',
 			Media_time_duration: '',
 		}
+		for (const definition of SETTINGS_VARIABLE_DEFINITIONS) {
+			values[definition.variableId] = ''
+		}
 		try {
 			for (let i = numberOfPresentationSlots; i > 0; i--) {
 				values[`presentation_slot${i}`] = '-'
@@ -634,6 +670,47 @@ class APSInstance extends InstanceBase {
 		values['image_slot_selected_number'] = 1
 
 		self.setVariableValues(values)
+	}
+
+	setSettingsVariables(data) {
+		const settings = data ?? {}
+		const mainPresenterScreen = settings.main_presenter_screen ?? {}
+		const runAtSystemStartup = settings.run_at_system_startup ?? {}
+		const availableDisplays = Array.isArray(mainPresenterScreen.available_displays)
+			? mainPresenterScreen.available_displays.filter(
+				(display) => Number.isInteger(display?.display_id) && typeof display?.display_name === 'string',
+			)
+			: []
+		const availableDisplaysChanged =
+			JSON.stringify(availableDisplays) !== JSON.stringify(this.settingsState.availableDisplays)
+		this.settingsState.availableDisplays = availableDisplays
+		if (availableDisplaysChanged) {
+			this.actions()
+		}
+
+		this.setVariableValues({
+			settings_main_presenter_screen_selection: mainPresenterScreen.selection ?? '',
+			settings_main_presenter_screen_configured_display_id:
+				mainPresenterScreen.selection === 'automatic' ||
+				mainPresenterScreen.configured_display_id === 0 ||
+				mainPresenterScreen.configured_display_id === null
+					? 'Auto'
+					: (mainPresenterScreen.configured_display_id ?? ''),
+			settings_main_presenter_screen_effective_display_id: mainPresenterScreen.effective_display_id ?? '',
+			settings_main_presenter_screen_effective_display_name: mainPresenterScreen.effective_display_name ?? '',
+			settings_presentation_file_handling: settings.presentation_file_handling ?? '',
+			settings_seamless_switching: settings.seamless_switching ?? '',
+			settings_run_at_system_startup_enabled: runAtSystemStartup.enabled ?? '',
+			settings_toggle_images_on_off_with_one_button: settings.toggle_images_on_off_with_one_button ?? '',
+			settings_powerpoint_hide_presenter: settings.powerpoint_hide_presenter ?? '',
+			settings_google_slides_use_presenter_view: settings.google_slides_use_presenter_view ?? '',
+			settings_pdf_controlled_program: settings.pdf_controlled_program ?? '',
+			settings_automatically_check_for_updates: settings.automatically_check_for_updates ?? '',
+			settings_installed_presentation_apps: Array.isArray(settings.installed_presentation_apps)
+				? settings.installed_presentation_apps.join(', ')
+				: '',
+		})
+		this.checkFeedbacks(...feedbacks.booleanSettingFeedbackIds)
 	}
 
 	setPowerPointSectionsVariables(data) {
