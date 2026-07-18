@@ -46,6 +46,21 @@ Controls APS by [PresentationTools](https://presentationtools.com/).
 - Go to the slide specified in the command
 - Go to the first slide of a selected, previous, or next PowerPoint section.
 
+#### Settings
+
+APS 4.2 or later on macOS can change these settings over LAN:
+
+- Settings: Main presenter screen
+- Settings: Presentation file handling
+- Settings: Seamless switching
+- Settings: Toggle images on/off with one button
+- Settings: PowerPoint hide presenter (mac)
+- Settings: Google Slides use presenter view
+- Settings: PDF controlled program
+- Settings: Automatically check for updates
+
+Boolean settings can be enabled, disabled, or toggled. Presenter-screen choices are populated from the displays reported by APS. Network port, run at system startup, detected applications, and effective-display information remain read-only over LAN.
+
 #### Commands to control specific presentation software:
 
 - Powerpoint: Go to slide
@@ -89,9 +104,30 @@ Mac only:
 - Powerpoint_section&lt;n&gt;_name: Section name for section &lt;n&gt;
 - Powerpoint_section&lt;n&gt;_first_slide_index: First presentation slide number for section &lt;n&gt;
 - Powerpoint_section&lt;n&gt;_slides_count: Number of slides in section &lt;n&gt;
+- settings_main_presenter_screen_selection: Configured presenter-screen selection mode
+- settings_main_presenter_screen_configured_display_id: Configured display ID, or `Auto` when automatic selection is active (APS may report `null` or `0`)
+- settings_main_presenter_screen_effective_display_id: Display ID currently resolved by APS
+- settings_main_presenter_screen_effective_display_name: Display name currently resolved by APS
+- settings_presentation_file_handling: Presentation file handling mode
+- settings_seamless_switching: Whether Seamless Switching is enabled
+- settings_run_at_system_startup_enabled: Whether the macOS login item is enabled
+- settings_toggle_images_on_off_with_one_button: Whether one still-image action toggles an image on and off
+- settings_powerpoint_hide_presenter: Whether APS suppresses PowerPoint Presenter View (mac)
+- settings_google_slides_use_presenter_view: Whether APS uses Google Slides Presenter View
+- settings_pdf_controlled_program: PDF application controlled by APS
+- settings_automatically_check_for_updates: Whether APS automatically checks for updates
+- settings_installed_presentation_apps: Detected presentation applications, separated by commas
+
+The `settings_` variables require APS 4.2 or later on macOS. They remain blank when the connected APS version or platform does not provide settings feedback.
 
 #### Feedbacks
 
+- Settings: Seamless switching is on
+- Settings: Run at system startup is on
+- Settings: Toggle images on/off with one button is on
+- Settings: PowerPoint hide presenter is on (mac)
+- Settings: Google Slides use presenter view is on
+- Settings: Automatically check for updates is on
 - loaded: is enabled when a still image is loaded in the image-banks
 - displayed: is enabled when a still image is displayed
 - captured: is enabled when screen is captured for saving as a still image.
