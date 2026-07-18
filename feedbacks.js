@@ -57,11 +57,11 @@ exports.getFeedbacks = function (instance) {
 			},
 			callback: function (feedback) {
 				let key = feedback.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = 'Display' + self.getVariableValue('image_slot_selected_number')
 					self.log('debug', key)
 				}
-				
+
 				return self.displayStates[key].loaded
 			},
 		},
@@ -84,7 +84,7 @@ exports.getFeedbacks = function (instance) {
 			},
 			callback: function (feedback) {
 				let key = feedback.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = 'Display' + self.getVariableValue('image_slot_selected_number')
 				}
 				return self.displayStates[key].displayed
@@ -172,7 +172,7 @@ exports.getFeedbacks = function (instance) {
 			},
 			callback: function (feedback) {
 				let key = feedback.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = 'Slot' + self.getVariableValue('presentation_slot_selected_number')
 				}
 				return self.slotStates[key].opened
@@ -251,7 +251,9 @@ exports.getFeedbacks = function (instance) {
 					label: 'File',
 					id: 'Key',
 					default: 'File1',
-					choices: choices.getItemForSelectedOption().concat(choices.getChoicesForPresentationFolderFiles(self.watchedPresentationFolderState.filesList)),
+					choices: choices
+						.getItemForSelectedOption()
+						.concat(choices.getChoicesForPresentationFolderFiles(self.watchedPresentationFolderState.filesList)),
 				},
 			],
 			defaultStyle: {
@@ -260,7 +262,7 @@ exports.getFeedbacks = function (instance) {
 			},
 			callback: function (feedback) {
 				let key = feedback.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = 'File' + self.getVariableValue('watched_presentation_folder_selected_presentation_number')
 				}
 				return self.watchedPresentationFolderState.filesState[key]?.opened
@@ -311,7 +313,7 @@ exports.getFeedbacks = function (instance) {
 			},
 			callback: function (feedback) {
 				let key = feedback.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = 'Slot' + self.getVariableValue('presentation_slot_selected_number')
 				}
 				return self.slotStates[key].exists
@@ -398,7 +400,10 @@ exports.getFeedbacks = function (instance) {
 				bgcolor: combineRgb(204, 204, 0),
 			},
 			callback: function (feedback) {
-				return self.getVariableValue('watched_presentation_folder_selected_presentation_number') == utils.extcractNumber(feedback.options.Key)
+				return (
+					self.getVariableValue('watched_presentation_folder_selected_presentation_number') ==
+					utils.extcractNumber(feedback.options.Key)
+				)
 			},
 		},
 
@@ -462,7 +467,10 @@ exports.getFeedbacks = function (instance) {
 				bgcolor: combineRgb(204, 204, 0),
 			},
 			callback: function (feedback) {
-				return self.getVariableValue('watched_media_folder_selected_media_number') == utils.extcractNumber(feedback.options.Key)
+				return (
+					self.getVariableValue('watched_media_folder_selected_media_number') ==
+					utils.extcractNumber(feedback.options.Key)
+				)
 			},
 		},
 
@@ -485,7 +493,7 @@ exports.getFeedbacks = function (instance) {
 			},
 			callback: function (feedback) {
 				let key = feedback.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = 'Load_MediaPlayer#' + self.getVariableValue('media_slot_selected_number')
 				}
 				return self.mediaPlayerState.slots[key].playing
@@ -503,8 +511,8 @@ exports.getFeedbacks = function (instance) {
 					id: 'Key',
 					default: 'Load_MediaPlayer#1',
 					choices: [{ id: `any_media_loaded`, label: `Any media loaded` }]
-								.concat(choices.getItemForSelectedOption())
-								.concat(choices.getChoicesForMediaPlayer()),
+						.concat(choices.getItemForSelectedOption())
+						.concat(choices.getChoicesForMediaPlayer()),
 				},
 			],
 			defaultStyle: {
@@ -513,7 +521,7 @@ exports.getFeedbacks = function (instance) {
 			},
 			callback: function (feedback) {
 				let key = feedback.options.Key
-				if(key == 'selected'){
+				if (key == 'selected') {
 					key = 'Load_MediaPlayer#' + self.getVariableValue('media_slot_selected_number')
 				}
 				return self.mediaPlayerState.slots[key].loaded
@@ -608,7 +616,10 @@ exports.getFeedbacks = function (instance) {
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: function (feedback) {
-				return (self.browserState.tabsList.findIndex(item => item.id === self.browserState.activeTabId) + 1) == parseInt(utils.extcractNumber(feedback.options.Tab))
+				return (
+					self.browserState.tabsList.findIndex((item) => item.id === self.browserState.activeTabId) + 1 ==
+					parseInt(utils.extcractNumber(feedback.options.Tab))
+				)
 			},
 		},
 
@@ -649,12 +660,12 @@ exports.getFeedbacks = function (instance) {
 					type: 'dropdown',
 					label: 'Application',
 					id: 'Application',
-					default: "PowerPoint",
+					default: 'PowerPoint',
 					tooltip: 'Application',
 					choices: [
-						{ id: 'PowerPoint', label: 'PowerPoint'},
-						{ id: 'PDF', label: 'PDF'},
-						{ id: 'Webpage', label: 'Webpage'},
+						{ id: 'PowerPoint', label: 'PowerPoint' },
+						{ id: 'PDF', label: 'PDF' },
+						{ id: 'Webpage', label: 'Webpage' },
 					],
 				},
 			],
@@ -663,7 +674,7 @@ exports.getFeedbacks = function (instance) {
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: function (feedback) {
-				return (self.generalState.activeApp == feedback.options.Application)
+				return self.generalState.activeApp == feedback.options.Application
 			},
 		},
 
@@ -739,10 +750,10 @@ exports.getFeedbacks = function (instance) {
 					default: 'playing',
 					tooltip: 'PowerPoint media state',
 					choices: [
-						{ id: 'playing', label: 'Playing'},
-						{ id: 'paused', label: 'Paused'},
-						{ id: 'stopped', label: 'Stopped'},
-						{ id: 'ready', label: 'Ready'},
+						{ id: 'playing', label: 'Playing' },
+						{ id: 'paused', label: 'Paused' },
+						{ id: 'stopped', label: 'Stopped' },
+						{ id: 'ready', label: 'Ready' },
 					],
 				},
 			],
@@ -751,7 +762,7 @@ exports.getFeedbacks = function (instance) {
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: function (feedback) {
-				return (self.generalState.PowerPoint_media_state == feedback.options.State)
+				return self.generalState.PowerPoint_media_state == feedback.options.State
 			},
 		},
 	}
