@@ -7,6 +7,7 @@ const {
 	minNumberOfMediaFolderFiles, 
 	numberOfMediaFolders,
 	minNumberOfTabs,
+	minNumberOfPowerPointSectionPresets,
 	} = require('./constants')
 exports.getPresets = function (instance) {
 	var self = instance
@@ -451,6 +452,21 @@ exports.getPresets = function (instance) {
 			},
 		],
 		feedbacks: [],
+	}
+
+	// PowerPoint sections
+	presets['PowerPointSectionPrevious'] = getPresetForPowerPointSectionNavigation(
+		'Previous section',
+		'Previous',
+	)
+	presets['PowerPointSectionNext'] = getPresetForPowerPointSectionNavigation('Next section', 'Next')
+
+	const numberOfPowerPointSectionPresets = Math.max(
+		minNumberOfPowerPointSectionPresets,
+		instance.powerPointSectionsState.sections.length,
+	)
+	for (let i = 1; i <= numberOfPowerPointSectionPresets; i++) {
+		presets[`PowerPointSection${i}`] = getPresetForPowerPointSection(instance.label, i)
 	}
 
 	// Still Images - Capture
@@ -2757,6 +2773,87 @@ function getPresetforWatchedPresentationFolderFilesOpen(lbl, txt, cr, FileNumber
 				style: {
 					color: 16777215,
 					bgcolor: 13369344,
+				},
+			},
+		],
+	}
+}
+
+function getPresetForPowerPointSectionNavigation(label, section) {
+	return {
+		type: 'button',
+		category: 'PowerPoint sections',
+		name: label,
+		style: {
+			text: label,
+			alignment: 'center:center',
+			size: 'auto',
+			color: 16777215,
+			bgcolor: 0,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'Powerpoint_Section_Go',
+						options: {
+							Section: section,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+}
+
+function getPresetForPowerPointSection(instanceLabel, sectionNumber) {
+	const section = String(sectionNumber)
+
+	return {
+		type: 'button',
+		category: 'PowerPoint sections',
+		name: `Section ${sectionNumber}`,
+		style: {
+			text: `${sectionNumber} - $(${instanceLabel}:Powerpoint_section${sectionNumber}_name)`,
+			alignment: 'center:center',
+			size: 'auto',
+			color: combineRgb(72, 72, 72),
+			bgcolor: 0,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'Powerpoint_Section_Go',
+						options: {
+							Section: section,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'PowerPoint_section_exists',
+				options: {
+					Section: section,
+				},
+				style: {
+					color: 16777215,
+					bgcolor: 0,
+				},
+			},
+			{
+				feedbackId: 'PowerPoint_section_is_current',
+				options: {
+					Section: section,
+				},
+				style: {
+					color: 16777215,
+					bgcolor: 16711680,
 				},
 			},
 		],

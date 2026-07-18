@@ -7,6 +7,7 @@ const {
 	numberOfImagesSlots,
 	minNumberOfMediaFolderFiles, numberOfMediaFolders,
 	minNumberOfTabs,
+	minNumberOfPowerPointSectionPresets,
 	} = require('./constants')
 
 var actions = require('./actions')
@@ -493,7 +494,11 @@ class APSInstance extends InstanceBase {
 			{ name: 'Media player: Time duration', variableId: 'Media_time_duration' },
 			...SETTINGS_VARIABLE_DEFINITIONS,
 		]
-		for (let i = 1; i <= self.powerPointSectionsState.sections.length; i++) {
+		const numberOfPowerPointSectionVariables = Math.max(
+			minNumberOfPowerPointSectionPresets,
+			self.powerPointSectionsState.sections.length,
+		)
+		for (let i = 1; i <= numberOfPowerPointSectionVariables; i++) {
 			variables.push(
 				{ name: `PowerPoint section ${i}: ID`, variableId: `Powerpoint_section${i}_id` },
 				{ name: `PowerPoint section ${i}: Name`, variableId: `Powerpoint_section${i}_name` },
@@ -626,6 +631,12 @@ class APSInstance extends InstanceBase {
 		for (const definition of SETTINGS_VARIABLE_DEFINITIONS) {
 			values[definition.variableId] = ''
 		}
+		for (let i = 1; i <= numberOfPowerPointSectionVariables; i++) {
+			values[`Powerpoint_section${i}_id`] = '-'
+			values[`Powerpoint_section${i}_name`] = '-'
+			values[`Powerpoint_section${i}_first_slide_index`] = -1
+			values[`Powerpoint_section${i}_slides_count`] = 0
+		}
 		try {
 			for (let i = numberOfPresentationSlots; i > 0; i--) {
 				values[`presentation_slot${i}`] = '-'
@@ -717,6 +728,8 @@ class APSInstance extends InstanceBase {
 		var self = this
 		const sections = Array.isArray(data?.sections) ? data.sections : []
 		const previousSectionsCount = self.powerPointSectionsState.sections.length
+		const previousPresetCount = Math.max(minNumberOfPowerPointSectionPresets, previousSectionsCount)
+		const nextPresetCount = Math.max(minNumberOfPowerPointSectionPresets, sections.length)
 
 		self.powerPointSectionsState = {
 			available: data?.available ?? false,
@@ -732,6 +745,9 @@ class APSInstance extends InstanceBase {
 			self.variables(true)
 			self.actions()
 		}
+		if (previousPresetCount !== nextPresetCount) {
+			self.presets()
+		}
 
 		const values = {
 			Powerpoint_sections_available: self.powerPointSectionsState.available,
@@ -742,13 +758,13 @@ class APSInstance extends InstanceBase {
 			Powerpoint_sections_count: self.powerPointSectionsState.sectionsCount,
 		}
 
-		for (let i = 0; i < sections.length; i++) {
+		for (let i = 0; i < nextPresetCount; i++) {
 			const sectionNumber = i + 1
 			const section = sections[i]
-			values[`Powerpoint_section${sectionNumber}_id`] = section.id ?? '-'
-			values[`Powerpoint_section${sectionNumber}_name`] = section.name ?? '-'
-			values[`Powerpoint_section${sectionNumber}_first_slide_index`] = section.first_slide_index ?? -1
-			values[`Powerpoint_section${sectionNumber}_slides_count`] = section.slides_count ?? 0
+			values[`Powerpoint_section${sectionNumber}_id`] = section?.id ?? '-'
+			values[`Powerpoint_section${sectionNumber}_name`] = section?.name ?? '-'
+			values[`Powerpoint_section${sectionNumber}_first_slide_index`] = section?.first_slide_index ?? -1
+			values[`Powerpoint_section${sectionNumber}_slides_count`] = section?.slides_count ?? 0
 		}
 
 		self.setVariableValues(values)
